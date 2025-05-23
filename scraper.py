@@ -41,12 +41,19 @@ def fetch_dogdrip():
     url = "https://www.dogdrip.net/index.php?mid=dogdrip&sort_index=pop&order_type=desc"
     res = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
     soup = BeautifulSoup(res.text, "html.parser")
-    posts = soup.select(".ed.board-list .title a")[:5]
+    posts = soup.select(".ed.board-list .title a")
     output.append("## 개드립")
+    count = 0
     for post in posts:
+        href = post.get('href')
+        if not href or 'document_srl' not in href:
+            continue
         title = post.text.strip()
-        link = "https://www.dogdrip.net" + post['href']
+        link = "https://www.dogdrip.net" + href
         output.append(f"- [{title}]({link})")
+        count += 1
+        if count >= 5:
+            break
     output.append("")
 
 fetch_ruliweb()
